@@ -9,7 +9,7 @@ import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
-import ProfilePic from "../../assets/profilePic.png"
+import ProfilePic from "../../assets/profilePic.png";
 import { ReactComponent as EditIcon } from "../../assets/editIcon.svg";
 
 export default function SideDrawer() {
