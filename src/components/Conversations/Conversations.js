@@ -49,6 +49,17 @@ export default function Conversations() {
     setConvoArr((prevArr) => [...prevArr, currBotItem]);
   };
 
+  const handleSave = () => {
+    const currConvo = {
+      date: `${new Date()}`,
+      conversationArr: convoArr,
+    }
+    let allConversations = JSON.parse(localStorage.getItem("conversations")) || [];
+    allConversations.push(currConvo);
+    localStorage.setItem("conversations", JSON.stringify(allConversations));
+    console.log("conversationsSaved!");
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.heading}>
@@ -67,7 +78,7 @@ export default function Conversations() {
             />
           ))}
       </div>
-      <MessageBox handleAsk={handleAsk} />
+      <MessageBox handleAsk={handleAsk} handleSave={handleSave} />
     </div>
   );
 }
