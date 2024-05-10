@@ -2,12 +2,19 @@ import React from "react";
 import styles from "./Conversations.module.css";
 import Typography from "@mui/material/Typography";
 import MessageBox from "../MessageBox/MessageBox";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Card from "../Card/Card";
 import { responseData } from "../../api/api";
 
 export default function Conversations() {
   const [convoArr, setConvoArr] = useState([]);
+  const cardsWrapperRef = useRef(null);
+
+  useEffect(() => {
+    if (cardsWrapperRef.current) {
+      cardsWrapperRef.current.scrollTop = cardsWrapperRef.current.scrollHeight;
+    }
+  }, [convoArr]);
   
   const findResponse = (text) => {
     let responseText = "";
@@ -49,7 +56,7 @@ export default function Conversations() {
           Bot AI
         </Typography>
       </div>
-      <div className={styles.cardsWrapper}>
+      <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
         {convoArr.length !== 0 &&
           convoArr.map((chat, idx) => (
             <Card
