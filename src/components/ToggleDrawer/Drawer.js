@@ -11,6 +11,7 @@ import ListItemText from "@mui/material/ListItemText";
 import MenuIcon from "@mui/icons-material/Menu";
 import ProfilePic from "../../assets/profilePic.png";
 import { ReactComponent as EditIcon } from "../../assets/editIcon.svg";
+import { Link } from "react-router-dom";
 
 export default function SideDrawer() {
   const [open, setOpen] = React.useState(false);
@@ -21,16 +22,16 @@ export default function SideDrawer() {
 
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" onClick={toggleDrawer(false)}>
-      <List>
+      <List disablePadding>
         <ListItem disablePadding>
-            <ListItemButton>
+            <ListItemButton component={Link} to="/" sx={{ backgroundColor: "var(--color-secondary)" }}>
                 <div className={styles.profilePic}><img src={ProfilePic} alt="ProfilePic" /></div>
                 <ListItemText primary="New Chat" />
                 <ListItemIcon><EditIcon /></ListItemIcon>
             </ListItemButton>
         </ListItem>
         <ListItem disablePadding>
-            <ListItemButton>
+            <ListItemButton component={Link} to="/history">
             <ListItemText primary="Past Conversations" />
             </ListItemButton>
         </ListItem>
