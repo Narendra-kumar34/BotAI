@@ -4,17 +4,42 @@ import Typography from "@mui/material/Typography";
 import MessageBox from "../MessageBox/MessageBox";
 import { useState } from "react";
 import Card from "../Card/Card";
+import { responseData } from "../../api/api";
 
 export default function Conversations() {
-  const[convoArr, setConvoArr] = useState([]);
+  const [convoArr, setConvoArr] = useState([]);
+  
+  const findResponse = (text) => {
+    let responseText = "";
+    responseData.forEach((data) => {
+      if(data.question === text) {
+        responseText = data.response;
+      };
+    });
+    return responseText || "As an AI Language Model, I don’t have the details";
+  }
 
   const handleAsk = (text) => {
     const currItem = {
       text: text,
-      time: `${new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true })}`,
+      time: `${new Date().toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })}`,
       type: "user",
     };
-    setConvoArr(prevArr => [...prevArr, currItem]);
+    setConvoArr((prevArr) => [...prevArr, currItem]);
+    const currBotItem = {
+      text: findResponse(text),
+      time: `${new Date().toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })}`,
+      type: "bot",
+    };
+    setConvoArr((prevArr) => [...prevArr, currBotItem]);
   };
 
   return (
@@ -24,12 +49,18 @@ export default function Conversations() {
           Bot AI
         </Typography>
       </div>
-      <div className={styles.content}>
-        <div className={styles.cardsWrapper}>
-          {convoArr.length!==0 && convoArr.map((chat, idx) => <Card key={idx} text={chat.text} time={chat.time} type={chat.type} />)}
-        </div>
-        <MessageBox handleAsk={handleAsk} />
+      <div className={styles.cardsWrapper}>
+        {convoArr.length !== 0 &&
+          convoArr.map((chat, idx) => (
+            <Card
+              key={idx}
+              text={chat.text}
+              time={chat.time}
+              type={chat.type}
+            />
+          ))}
       </div>
+      <MessageBox handleAsk={handleAsk} />
     </div>
   );
 }
