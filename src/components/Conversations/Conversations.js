@@ -6,15 +6,9 @@ import { useState, useEffect, useRef } from "react";
 import Card from "../Card/Card";
 import { responseData } from "../../api/api";
 
-export default function Conversations() {
-  const [convoArr, setConvoArr] = useState([]);
-  const cardsWrapperRef = useRef(null);
-
-  useEffect(() => {
-    if (cardsWrapperRef.current) {
-      cardsWrapperRef.current.scrollTop = cardsWrapperRef.current.scrollHeight;
-    }
-  }, [convoArr]);
+export default function Conversations({ initialText="" }) {
+  let initialUserText = "";
+  let initialBotResponse = "";
   
   const findResponse = (text) => {
     let responseText = "";
@@ -25,6 +19,35 @@ export default function Conversations() {
     });
     return responseText || "As an AI Language Model, I don’t have the details";
   }
+
+  if(initialText) {
+    initialUserText = {
+      text: initialText,
+      time: `${new Date().toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })}`,
+      type: "user",
+    };
+    initialBotResponse = {
+      text: findResponse(initialText),
+      time: `${new Date().toLocaleTimeString("en-US", {
+        hour: "numeric",
+        minute: "2-digit",
+        hour12: true,
+      })}`,
+      type: "bot",
+    };
+  }
+  const [convoArr, setConvoArr] = useState(initialText === "" ? [] : [initialUserText, initialBotResponse]);
+  const cardsWrapperRef = useRef(null);
+
+  useEffect(() => {
+    if (cardsWrapperRef.current) {
+      cardsWrapperRef.current.scrollTop = cardsWrapperRef.current.scrollHeight;
+    }
+  }, [convoArr]);
 
   const handleAsk = (text) => {
     const currItem = {

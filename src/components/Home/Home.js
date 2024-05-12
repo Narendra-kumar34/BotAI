@@ -6,8 +6,15 @@ import Card from '@mui/material/Card';
 import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import MessageBox from "../MessageBox/MessageBox";
+import { useNavigate } from "react-router-dom";
 
 export default function Home() {
+  const navigate = useNavigate();
+
+  const handleAsk = (text) => {
+    navigate("/chat", { state: { inputText: text } });
+  };
+
   return (
     <div className={styles.wrapper}>
       <div className={styles.heading}><Typography variant="h4" sx={{ fontWeight: 700 }}>Bot AI</Typography></div>
@@ -68,7 +75,7 @@ export default function Home() {
             </Card>
           </Grid>         
         </Grid>
-        <MessageBox />
+        <MessageBox handleAsk={handleAsk} />
       </div>
     </div>
   );

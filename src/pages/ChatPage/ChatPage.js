@@ -4,8 +4,12 @@ import SideDrawer from "../../components/ToggleDrawer/Drawer";
 import Grid from "@mui/material/Grid";
 import StaticDrawer from "../../components/StaticDrawer/StaticDrawer";
 import Conversations from "../../components/Conversations/Conversations";
+import { useLocation } from "react-router-dom";
 
 export default function ChatPage() {
+  const location = useLocation();
+  const inputText = location.state && location.state.inputText;
+
   return (
     <div style={{ height: "100%" }}>
       <div style={{ position: "absolute", width: "100%" }}>
@@ -16,7 +20,7 @@ export default function ChatPage() {
           <StaticDrawer />
         </Grid>
         <Grid item xs={12} sm={10}>
-          <Conversations />
+          <Conversations initialText={inputText} />
         </Grid>
       </Grid>
     </div>
