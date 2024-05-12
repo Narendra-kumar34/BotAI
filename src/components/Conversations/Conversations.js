@@ -5,22 +5,25 @@ import MessageBox from "../MessageBox/MessageBox";
 import { useState, useEffect, useRef } from "react";
 import Card from "../Card/Card";
 import { responseData } from "../../api/api";
+import { useSnackbar } from "notistack";
 
-export default function Conversations({ initialText="" }) {
+export default function Conversations({ initialText = "" }) {
+  const { enqueueSnackbar } = useSnackbar();
+
   let initialUserText = "";
   let initialBotResponse = "";
-  
+
   const findResponse = (text) => {
     let responseText = "";
     responseData.forEach((data) => {
-      if(data.question === text) {
+      if (data.question === text) {
         responseText = data.response;
-      };
+      }
     });
     return responseText || "As an AI Language Model, I don’t have the details";
-  }
+  };
 
-  if(initialText) {
+  if (initialText) {
     initialUserText = {
       text: initialText,
       time: `${new Date().toLocaleTimeString("en-US", {
@@ -40,7 +43,9 @@ export default function Conversations({ initialText="" }) {
       type: "bot",
     };
   }
-  const [convoArr, setConvoArr] = useState(initialText === "" ? [] : [initialUserText, initialBotResponse]);
+  const [convoArr, setConvoArr] = useState(
+    initialText === "" ? [] : [initialUserText, initialBotResponse]
+  );
   const cardsWrapperRef = useRef(null);
 
   useEffect(() => {
@@ -50,36 +55,42 @@ export default function Conversations({ initialText="" }) {
   }, [convoArr]);
 
   const handleAsk = (text) => {
-    const currItem = {
-      text: text,
-      time: `${new Date().toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      })}`,
-      type: "user",
-    };
-    setConvoArr((prevArr) => [...prevArr, currItem]);
-    const currBotItem = {
-      text: findResponse(text),
-      time: `${new Date().toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      })}`,
-      type: "bot",
-    };
-    setConvoArr((prevArr) => [...prevArr, currBotItem]);
+    if (text === "") {
+      enqueueSnackbar("Please enter something", { variant: "warning" });
+    } else {
+      const currItem = {
+        text: text,
+        time: `${new Date().toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        })}`,
+        type: "user",
+      };
+      setConvoArr((prevArr) => [...prevArr, currItem]);
+      const currBotItem = {
+        text: findResponse(text),
+        time: `${new Date().toLocaleTimeString("en-US", {
+          hour: "numeric",
+          minute: "2-digit",
+          hour12: true,
+        })}`,
+        type: "bot",
+      };
+      setConvoArr((prevArr) => [...prevArr, currBotItem]);
+    }
   };
 
   const handleSave = () => {
     const currConvo = {
       date: `${new Date()}`,
       conversationArr: convoArr,
-    }
-    let allConversations = JSON.parse(localStorage.getItem("conversations")) || [];
+    };
+    let allConversations =
+      JSON.parse(localStorage.getItem("conversations")) || [];
     allConversations.push(currConvo);
     localStorage.setItem("conversations", JSON.stringify(allConversations));
+    enqueueSnackbar("Conversation saved!", { variant: "success" });
   };
 
   return (

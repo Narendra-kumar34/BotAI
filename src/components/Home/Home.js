@@ -7,12 +7,23 @@ import Typography from '@mui/material/Typography';
 import CardContent from '@mui/material/CardContent';
 import MessageBox from "../MessageBox/MessageBox";
 import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
 
 export default function Home() {
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleAsk = (text) => {
-    navigate("/chat", { state: { inputText: text } });
+    if(text === "") {
+      enqueueSnackbar("Please enter something", { variant: "warning" });
+    }
+    else {
+      navigate("/chat", { state: { inputText: text } });
+    }
+  };
+
+  const handleSave = () => {
+    enqueueSnackbar("Please ask something before saving", { variant: "warning" });
   };
 
   return (
@@ -75,7 +86,7 @@ export default function Home() {
             </Card>
           </Grid>         
         </Grid>
-        <MessageBox handleAsk={handleAsk} />
+        <MessageBox handleAsk={handleAsk} handleSave={handleSave} />
       </div>
     </div>
   );

@@ -3,15 +3,33 @@ import styles from "./History.module.css";
 import Typography from "@mui/material/Typography";
 import MessageBox from "../MessageBox/MessageBox";
 import HistoryCard from "../HistoryCard/HistoryCard";
+import { useNavigate } from "react-router-dom";
+import { useSnackbar } from "notistack";
 
 export default function History() {
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
   const historyArr = JSON.parse(localStorage.getItem("conversations")) || [];
+
   if(historyArr.length > 1) {
     historyArr.sort((arr1, arr2) => {
       const date1 = new Date(arr1.date);
       const date2 = new Date(arr2.date);
       return date2 - date1;
     })
+  }
+
+  const handleAsk = (text) => {
+    if(text === "") {
+      enqueueSnackbar("Please enter something", { variant: "warning" });
+    }
+    else {
+      navigate("/chat", { state: { inputText: text } });
+    }
+  };
+
+  const handleSave = () => {
+    enqueueSnackbar("Please ask something before saving", { variant: "warning" });
   }
 
   function formatDate(date) {
@@ -66,7 +84,7 @@ export default function History() {
             );
           })}
       </div>
-      <MessageBox />
+      <MessageBox handleAsk={handleAsk} handleSave={handleSave} />
     </div>
   );
 }
