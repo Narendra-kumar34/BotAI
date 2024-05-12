@@ -57,7 +57,6 @@ export default function Conversations() {
     let allConversations = JSON.parse(localStorage.getItem("conversations")) || [];
     allConversations.push(currConvo);
     localStorage.setItem("conversations", JSON.stringify(allConversations));
-    console.log("conversationsSaved!");
   };
 
   return (

@@ -3,6 +3,7 @@ import React from "react";
 import SideDrawer from "../../components/ToggleDrawer/Drawer";
 import Grid from "@mui/material/Grid";
 import StaticDrawer from "../../components/StaticDrawer/StaticDrawer";
+import History from "../../components/History/History";
 
 export default function HistoryPage() {
   return (
@@ -15,7 +16,7 @@ export default function HistoryPage() {
           <StaticDrawer />
         </Grid>
         <Grid item xs={12} sm={10}>
-            {/* History of chats */}
+            <History />
         </Grid>
       </Grid>
     </div>

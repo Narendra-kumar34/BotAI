@@ -11,11 +11,16 @@ export default function MessageBox({ handleAsk, handleSave }) {
     setText("");
   }
 
+  const handleSaving = (e) => {
+    e.preventDefault();
+    handleSave();
+  }
+
   return (
     <form onSubmit={(e) => handleSubmit(e)} className={styles.wrapper}>
       <input type="text" onChange={(e) => setText(e.target.value)} value={text} className={styles.inputField} />
       <input type="submit" value="Ask" className={styles.buttonStyle} />
-      <button onClick={handleSave} className={styles.buttonStyle}>Save</button>
+      <button onClick={(e) => handleSaving(e)} className={styles.buttonStyle}>Save</button>
     </form>
   );
 }

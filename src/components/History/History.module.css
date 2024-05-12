@@ -1,0 +1,37 @@
+.wrapper {
+    background-image: linear-gradient(to right, rgba(215, 199, 244, 0.2), rgba(151, 133, 186, 0.2));
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 0.5rem 1rem;
+    gap: 1rem;
+}
+
+.cardsWrapper {
+    width: 100%;
+    height: 76vh;
+    overflow: auto;
+}
+
+.heading {
+    padding: 1rem 0rem;
+}
+
+@media screen and (max-width: 480px) {
+    .heading {
+        margin-top: 2.5rem;
+    }
+}
+
+.cardsSubWrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    padding-bottom: 1rem;
+}
+
+.chatDate {
+    font-size: 20px;
+    font-weight: 400;
+}
