@@ -4,49 +4,55 @@ import Typography from "@mui/material/Typography";
 import MessageBox from "../MessageBox/MessageBox";
 import { useState, useEffect, useRef } from "react";
 import Card from "../Card/Card";
-import { responseData } from "../../api/api";
+// import { responseData } from "../../api/api";
 import { useSnackbar } from "notistack";
+const { GoogleGenerativeAI } = require("@google/generative-ai");
 
 export default function Conversations({ initialText = "" }) {
   const { enqueueSnackbar } = useSnackbar();
+  const googleAPIKey = "AIzaSyDrgUrvHzJbGXlZah8EoTJuBqcDFraGR5Q";
+  const genAI = new GoogleGenerativeAI(googleAPIKey);
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
-  let initialUserText = "";
-  let initialBotResponse = "";
-
-  const findResponse = (text) => {
-    let responseText = "";
-    responseData.forEach((data) => {
-      if (data.question === text) {
-        responseText = data.response;
-      }
-    });
+  const findResponse = async (text) => {
+    const result = await model.generateContent(text);
+    const responseText = await result.response.text();
     return responseText || "As an AI Language Model, I don’t have the details";
   };
 
-  if (initialText) {
-    initialUserText = {
-      text: initialText,
-      time: `${new Date().toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      })}`,
-      type: "user",
-    };
-    initialBotResponse = {
-      text: findResponse(initialText),
-      time: `${new Date().toLocaleTimeString("en-US", {
-        hour: "numeric",
-        minute: "2-digit",
-        hour12: true,
-      })}`,
-      type: "bot",
-    };
-  }
-  const [convoArr, setConvoArr] = useState(
-    initialText === "" ? [] : [initialUserText, initialBotResponse]
-  );
+  const [convoArr, setConvoArr] = useState([]);
   const cardsWrapperRef = useRef(null);
+
+  useEffect(() => {
+    const initializeConversation = async () => {
+      if (initialText) {
+        const initialUserText = {
+          text: initialText,
+          time: `${new Date().toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          })}`,
+          type: "user",
+        };
+
+        const initialBotResponseText = await findResponse(initialText);
+        const initialBotResponse = {
+          text: initialBotResponseText,
+          time: `${new Date().toLocaleTimeString("en-US", {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+          })}`,
+          type: "bot",
+        };
+
+        setConvoArr([initialUserText, initialBotResponse]);
+      }
+    };
+
+    initializeConversation();
+  }, [initialText]);
 
   useEffect(() => {
     if (cardsWrapperRef.current) {
@@ -54,7 +60,7 @@ export default function Conversations({ initialText = "" }) {
     }
   }, [convoArr]);
 
-  const handleAsk = (text) => {
+  const handleAsk = async (text) => {
     if (text === "") {
       enqueueSnackbar("Please enter something", { variant: "warning" });
     } else {
@@ -68,8 +74,10 @@ export default function Conversations({ initialText = "" }) {
         type: "user",
       };
       setConvoArr((prevArr) => [...prevArr, currItem]);
+
+      const currBotItemText = await findResponse(text);
       const currBotItem = {
-        text: findResponse(text),
+        text: currBotItemText,
         time: `${new Date().toLocaleTimeString("en-US", {
           hour: "numeric",
           minute: "2-digit",
@@ -103,12 +111,7 @@ export default function Conversations({ initialText = "" }) {
       <div ref={cardsWrapperRef} className={styles.cardsWrapper}>
         {convoArr.length !== 0 &&
           convoArr.map((chat, idx) => (
-            <Card
-              key={idx}
-              text={chat.text}
-              time={chat.time}
-              type={chat.type}
-            />
+            <Card key={idx} text={chat.text} time={chat.time} type={chat.type} />
           ))}
       </div>
       <MessageBox handleAsk={handleAsk} handleSave={handleSave} />
